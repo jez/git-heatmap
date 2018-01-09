@@ -5,6 +5,8 @@
 ccyan="$(echo -ne '\033[0;36m')"
 cnone="$(echo -ne '\033[0m')"
 
+set -euo pipefail
+
 argv=()
 while [[ $# -gt 0 ]]; do
   key="$1"
@@ -19,6 +21,11 @@ while [[ $# -gt 0 ]]; do
       shift
       shift
       ;;
+    --width)
+      WIDTH="$2"
+      shift
+      shift
+      ;;
     -h)
       cat <<EOF
 Heatmap of oft-edited files.
@@ -28,6 +35,7 @@ Usage:
 
 Options:
   -n <top>                      Limit to top <n> files. [default: 30]
+  --width <n>                   Limit histogram to <n> chars.
   -b <branch>, --base <branch>  Compare relative to <branch>. If on <branch>,
                                 show heatmap for entire repo. [default: master]
   -h                            Show this message.
@@ -42,6 +50,7 @@ EOF
 done
 
 LIMIT=${LIMIT:-30}
+WIDTH=${WIDTH:-60}
 REVIEW_BASE=${REVIEW_BASE:-master}
 
 files() {
@@ -61,16 +70,20 @@ filter() {
     head -n "$LIMIT"
 }
 
+histogram() {
+  bars --bar █ --width "$WIDTH"
+}
+
 if [[ "$(git branch | grep '\*')" =~ $REVIEW_BASE ]]; then
   # If on master, show heatmap for whole repo
-  files | filter | bars --bar █ | color_name
+  files | filter | histogram | color_name
 else
   MERGE_BASE="$(git merge-base HEAD "$REVIEW_BASE")"
   files | \
     # If on separate branch, show heatmap for files changed since master
     grep -xF -f <(git diff --name-only "$MERGE_BASE") | \
     filter | \
-    bars --bar █ | \
+    histogram | \
     color_name
 fi
 
