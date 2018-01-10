@@ -37,6 +37,7 @@ Options:
   --width <n>                   Limit histogram to <n> chars.
   -b <branch>, --base <branch>  Compare relative to <branch>. If on <branch>,
                                 show heatmap for entire repo. [default: master]
+  -c <char>, --char <char>      Use <char> to draw the bars. [default: █]
   -h                            Show this message.
 ```
 
