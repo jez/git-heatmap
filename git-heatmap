@@ -21,6 +21,11 @@ while [[ $# -gt 0 ]]; do
       shift
       shift
       ;;
+    -c|--char)
+      CHAR="$2"
+      shift
+      shift
+      ;;
     --width)
       WIDTH="$2"
       shift
@@ -38,6 +43,7 @@ Options:
   --width <n>                   Limit histogram to <n> chars.
   -b <branch>, --base <branch>  Compare relative to <branch>. If on <branch>,
                                 show heatmap for entire repo. [default: master]
+  -c <char>, --char <char>      Use <char> to draw the bars. [default: █]
   -h                            Show this message.
 EOF
       exit
@@ -51,6 +57,7 @@ done
 
 LIMIT=${LIMIT:-30}
 WIDTH=${WIDTH:-60}
+CHAR=${CHAR:-█}
 REVIEW_BASE=${REVIEW_BASE:-master}
 
 files() {
@@ -63,15 +70,15 @@ color_name() {
 }
 
 filter() {
-  sort | \
+  grep '.' | \
+    sort | \
     uniq -c | \
     sort -nr | \
-    tail -n +2 | \
     head -n "$LIMIT"
 }
 
 histogram() {
-  bars --bar █ --width "$WIDTH"
+  bars --bar "$CHAR" --width "$WIDTH"
 }
 
 if [[ "$(git branch | grep '\*')" =~ $REVIEW_BASE ]]; then
