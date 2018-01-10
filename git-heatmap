@@ -65,8 +65,11 @@ files() {
 }
 
 color_name() {
-  # \(.*\/\)\([^/ ]*\)
-  sed -e "s/\(..*\/\)*\(.[^|]*\) |/\1$ccyan\2$cnone |/"
+  if [ -t 1 ]; then
+    sed -e "s/\(..*\/\)*\(.[^|]*\) |/\1$ccyan\2$cnone |/"
+  else
+    cat -
+  fi
 }
 
 filter() {
