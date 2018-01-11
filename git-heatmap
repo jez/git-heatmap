@@ -31,6 +31,11 @@ while [[ $# -gt 0 ]]; do
       shift
       shift
       ;;
+    -f|--filter)
+      FILTER="$2"
+      shift
+      shift
+      ;;
     -h)
       cat <<EOF
 Heatmap of oft-edited files.
@@ -44,6 +49,8 @@ Options:
   -b <branch>, --base <branch>  Compare relative to <branch>. If on <branch>,
                                 show heatmap for entire repo. [default: master]
   -c <char>, --char <char>      Use <char> to draw the bars. [default: █]
+  -f <cmd>, --filter <cmd>      Filter output through <cmd> before creating the
+                                the histogram.
   -h                            Show this message.
 EOF
       exit
@@ -59,6 +66,7 @@ LIMIT=${LIMIT:-30}
 REVIEW_BASE=${REVIEW_BASE:-master}
 CHAR=${CHAR:-█}
 WIDTH=${WIDTH:-60}
+FILTER=${FILTER:-cat -}
 
 files() {
   # https://stackoverflow.com/questions/7577052/
@@ -76,6 +84,7 @@ color_name() {
 
 filter() {
   grep '.' | \
+    eval "$FILTER" | \
     sort | \
     uniq -c | \
     sort -nr | \
