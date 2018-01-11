@@ -38,6 +38,8 @@ Options:
   -b <branch>, --base <branch>  Compare relative to <branch>. If on <branch>,
                                 show heatmap for entire repo. [default: master]
   -c <char>, --char <char>      Use <char> to draw the bars. [default: █]
+  -f <cmd>, --filter <cmd>      Filter output through <cmd> before creating the
+                                the histogram.
   -h                            Show this message.
 ```
 
