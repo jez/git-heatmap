@@ -43,6 +43,14 @@ Options:
   -h                            Show this message.
 ```
 
+## FAQ
+
+- **How do I disable color?**
+
+  Color is automatically disabled when output is not to a TTY (for example, when
+  piping to another command or redirecting to a file). If you need a flag to
+  control this, open an issue with your use case.
+
 ## License
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://jez.io/MIT-LICENSE.txt)
