@@ -36,6 +36,11 @@ while [[ $# -gt 0 ]]; do
       shift
       shift
       ;;
+    -s|--since)
+      SINCE="$2"
+      shift
+      shift
+      ;;
     -h)
       cat <<EOF
 Heatmap of oft-edited files.
@@ -51,6 +56,7 @@ Options:
   -c <char>, --char <char>      Use <char> to draw the bars. [default: █]
   -f <cmd>, --filter <cmd>      Filter output through <cmd> before creating the
                                 the histogram.
+  -s <date>, --since <date>     Filter git log since <date>. [default: always]
   -h                            Show this message.
 EOF
       exit
@@ -67,10 +73,11 @@ REVIEW_BASE=${REVIEW_BASE:-master}
 CHAR=${CHAR:-█}
 WIDTH=${WIDTH:-60}
 FILTER=${FILTER:-cat -}
+SINCE=${SINCE:-0001-01-01}
 
 files() {
   # https://stackoverflow.com/questions/7577052/
-  git log --name-status --pretty=format: -- "${ARGV[@]+"${ARGV[@]}"}" | \
+  git log --since="$SINCE" --name-status --pretty=format: -- "${ARGV[@]+"${ARGV[@]}"}" | \
     cut -f 2-
 }
 
