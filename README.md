@@ -8,10 +8,14 @@
 
 ### Dependencies
 
-You must have the `bars` command on your system first:
+You must have the either `barchart` or `bars` command on your system first. Pick
+your poison:
 
-```
+```bash
+# either:
 npm install -g https://github.com/jez/bars.git
+# or:
+cargo install --git https://github.com/jez/barchart.git
 ```
 
 ### Installation

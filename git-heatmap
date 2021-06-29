@@ -92,8 +92,17 @@ filter() {
 }
 
 histogram() {
-  bars --bar "$CHAR" --width "$WIDTH"
+  "$bars" --bar "$CHAR" --width "$WIDTH"
 }
+
+if command -v barchart &> /dev/null; then
+  bars="barchart"
+elif command -v bars &> /dev/null; then
+  bars="bars"
+else
+  >&2 echo "$0: This command requires a command called 'bars' or 'barchart'. See the README."
+  exit 1
+fi
 
 if [[ "$(git branch | grep '\*')" =~ $REVIEW_BASE ]]; then
   # If on master, show heatmap for whole repo
