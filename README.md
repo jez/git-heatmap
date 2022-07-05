@@ -54,7 +54,11 @@ Options:
   Color is automatically disabled when output is not to a TTY (for example, when
   piping to another command or redirecting to a file). If you need a flag to
   control this, open an issue with your use case.
+  
+- **How do I heatmap directories instead of files?**
 
+  Use `--filter 'xargs dirname'`.
+  
 ## License
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://jez.io/MIT-LICENSE.txt)
