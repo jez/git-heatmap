@@ -36,6 +36,14 @@ while [[ $# -gt 0 ]]; do
       shift
       shift
       ;;
+    -d|--dirs)
+      DIRS=true
+      shift
+      ;;
+    -p|--parent-dirs)
+      PARENT_DIRS=true
+      shift
+      ;;
     -h)
       cat <<EOF
 Heatmap of oft-edited files.
@@ -45,12 +53,16 @@ Usage:
 
 Options:
   -n <top>                      Limit to top <n> files. [default: 30]
-  --width <n>                   Limit histogram to <n> chars.
+  --width <n>                   Limit histogram to <n> chars. [default: 60]
   -b <branch>, --base <branch>  Compare relative to <branch>. If on <branch>,
                                 show heatmap for entire repo. [default: master]
   -c <char>, --char <char>      Use <char> to draw the bars. [default: █]
   -f <cmd>, --filter <cmd>      Filter output through <cmd> before creating the
                                 the histogram.
+  -d, --dirs                    Include directories in the heatmap.
+                                [default: false]
+  -p, --parent-dirs             Include directories and parent directories in
+                                the heatmap. [default: false]
   -h                            Show this message.
 EOF
       exit
@@ -67,6 +79,8 @@ REVIEW_BASE=${REVIEW_BASE:-master}
 CHAR=${CHAR:-█}
 WIDTH=${WIDTH:-60}
 FILTER=${FILTER:-cat -}
+DIRS=${DIRS:-false}
+PARENT_DIRS=${PARENT_DIRS:-false}
 
 files() {
   # https://stackoverflow.com/questions/7577052/
