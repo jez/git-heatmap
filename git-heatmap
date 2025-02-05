@@ -36,12 +36,8 @@ while [[ $# -gt 0 ]]; do
       shift
       shift
       ;;
-    -d|--dirs)
-      DIRS=true
-      shift
-      ;;
-    -p|--parent-dirs)
-      PARENT_DIRS=true
+    -r|--recursive)
+      RECURSIVE=true
       shift
       ;;
     -h)
@@ -59,10 +55,8 @@ Options:
   -c <char>, --char <char>      Use <char> to draw the bars. [default: █]
   -f <cmd>, --filter <cmd>      Filter output through <cmd> before creating the
                                 the histogram.
-  -d, --dirs                    Include directories in the heatmap.
+  -r, --recursive               Also include directories and parent directories.
                                 [default: false]
-  -p, --parent-dirs             Include directories and parent directories in
-                                the heatmap. [default: false]
   -h                            Show this message.
 EOF
       exit
@@ -79,8 +73,7 @@ REVIEW_BASE=${REVIEW_BASE:-master}
 CHAR=${CHAR:-█}
 WIDTH=${WIDTH:-60}
 FILTER=${FILTER:-cat -}
-DIRS=${DIRS:-false}
-PARENT_DIRS=${PARENT_DIRS:-false}
+RECURSIVE=${RECURSIVE:-false}
 
 files() {
   # https://stackoverflow.com/questions/7577052/
@@ -89,24 +82,24 @@ files() {
 }
 
 dirs() {
-  if [ "$DIRS" = true ] && [ "$PARENT_DIRS" = false ]; then
-    sed -e 's|/[^/]*$|/|'
-  elif [ "$DIRS" = true ] && [ "$PARENT_DIRS" = true ]; then
-    expand_parent_dirs  
-  else 
+  if  [ "$RECURSIVE" = true ]; then
+    awk -F/ '
+    {
+        path=$0
+        print path
+        split(path,parts,"/")
+        len=length(parts)
+        for(i=len;i>0;i--) {
+            dirpath=""
+            for(j=1;j<i;j++) {
+                dirpath=dirpath parts[j] "/"
+            }
+            if(dirpath) print dirpath
+        }
+    }'
+  else
     cat -
   fi
-}
-
-expand_parent_dirs() {
-  while IFS= read -r file_path; do
-    echo "$file_path"
-    dir_path=$(dirname "$file_path")
-    while [[ "$dir_path" != "." ]]; do
-      echo "$dir_path/"
-      dir_path=$(dirname "$dir_path")
-    done
-  done
 }
 
 color_name() {
