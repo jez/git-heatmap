@@ -88,6 +88,27 @@ files() {
     cut -f 2-
 }
 
+dirs() {
+  if [ "$DIRS" = true ] && [ "$PARENT_DIRS" = false ]; then
+    sed -e 's|/[^/]*$|/|'
+  elif [ "$DIRS" = true ] && [ "$PARENT_DIRS" = true ]; then
+    expand_parent_dirs  
+  else 
+    cat -
+  fi
+}
+
+expand_parent_dirs() {
+  while IFS= read -r file_path; do
+    echo "$file_path"
+    dir_path=$(dirname "$file_path")
+    while [[ "$dir_path" != "." ]]; do
+      echo "$dir_path/"
+      dir_path=$(dirname "$dir_path")
+    done
+  done
+}
+
 color_name() {
   if [ -t 1 ]; then
     sed -e "s/\(..*\/\)*\(.[^|]*\) |/\1$ccyan\2$cnone |/"
@@ -120,12 +141,13 @@ fi
 
 if [[ "$(git branch | grep '\*')" =~ $REVIEW_BASE ]]; then
   # If on master, show heatmap for whole repo
-  files | filter | histogram | color_name
+  files | dirs | filter | histogram | color_name
 else
   MERGE_BASE="$(git merge-base HEAD "$REVIEW_BASE")"
   files | \
     # If on separate branch, show heatmap for files changed since master
     grep -xF -f <(git diff --name-only "$MERGE_BASE") | \
+    dirs | \
     filter | \
     histogram | \
     color_name
