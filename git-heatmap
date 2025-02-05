@@ -73,7 +73,7 @@ REVIEW_BASE=${REVIEW_BASE:-master}
 CHAR=${CHAR:-█}
 WIDTH=${WIDTH:-60}
 FILTER=${FILTER:-cat -}
-RECURSIVE=${RECURSIVE:-false}
+ALL=${ALL:-false}
 
 files() {
   # https://stackoverflow.com/questions/7577052/
