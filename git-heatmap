@@ -49,7 +49,7 @@ Usage:
 
 Options:
   -n <top>                      Limit to top <n> files. [default: 30]
-  --width <n>                   Limit histogram to <n> chars. [default: 60]
+  --width <n>                   Limit histogram to <n> chars.
   -b <branch>, --base <branch>  Compare relative to <branch>. If on <branch>,
                                 show heatmap for entire repo. [default: master]
   -c <char>, --char <char>      Use <char> to draw the bars. [default: █]
@@ -88,7 +88,7 @@ expand() {
         path = $0
         print path
         split(path, parts, "/")
-        len=length(parts)
+        len = length(parts)
         for (i = len; i > 0; i--) {
             dirpath = ""
             for (j = 1; j < i; j++) {
