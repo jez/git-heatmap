@@ -63,13 +63,9 @@ EOF
   esac
 done
 
-default_branch() {
-  echo "entry" 1>&2
-  echo $(git rev-parse -q --verify master && echo "master" || echo "main")
-}
-
 LIMIT=${LIMIT:-30}
-REVIEW_BASE=${REVIEW_BASE:-$(default_branch)}
+DEFAULT_BRANCH="$(git rev-parse -q --verify master > /dev/null && echo "master" || echo "main")"
+REVIEW_BASE=${REVIEW_BASE:-$DEFAULT_BRANCH}
 CHAR=${CHAR:-█}
 WIDTH=${WIDTH:-60}
 FILTER=${FILTER:-cat -}
