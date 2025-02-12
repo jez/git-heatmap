@@ -40,7 +40,8 @@ Options:
   -n <top>                      Limit to top <n> files. [default: 30]
   --width <n>                   Limit histogram to <n> chars.
   -b <branch>, --base <branch>  Compare relative to <branch>. If on <branch>,
-                                show heatmap for entire repo. [default: master]
+                                show heatmap for entire repo.
+                                [default: master, if exists, else main]
   -c <char>, --char <char>      Use <char> to draw the bars. [default: █]
   -f <cmd>, --filter <cmd>      Filter output through <cmd> before creating the
                                 the histogram.
