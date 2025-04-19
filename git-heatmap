@@ -36,6 +36,10 @@ while [[ $# -gt 0 ]]; do
       shift
       shift
       ;;
+    -a|--all)
+      ALL=true
+      shift
+      ;;
     -h)
       cat <<EOF
 Heatmap of oft-edited files.
@@ -51,6 +55,8 @@ Options:
   -c <char>, --char <char>      Use <char> to draw the bars. [default: █]
   -f <cmd>, --filter <cmd>      Filter output through <cmd> before creating the
                                 the histogram.
+  -a, --all                     Include directories and parent directories of
+                                files in the histogram. [default: false]
   -h                            Show this message.
 EOF
       exit
@@ -67,11 +73,34 @@ REVIEW_BASE=${REVIEW_BASE:-master}
 CHAR=${CHAR:-█}
 WIDTH=${WIDTH:-60}
 FILTER=${FILTER:-cat -}
+ALL=${ALL:-false}
 
 files() {
   # https://stackoverflow.com/questions/7577052/
   git log --name-status --pretty=format: -- "${ARGV[@]+"${ARGV[@]}"}" | \
     cut -f 2-
+}
+
+expand() {
+  if [ "$ALL" = true ]; then
+    awk -F/ '
+    {
+        path = $0
+        print path
+        split(path, parts, "/")
+        len = length(parts)
+        for (i = len; i > 0; i--) {
+            dirpath = ""
+            for (j = 1; j < i; j++) {
+                dirpath = dirpath parts[j] "/"
+            }
+            if (dirpath) print dirpath
+            else print "."
+        }
+    }'
+  else
+    cat -
+  fi
 }
 
 color_name() {
@@ -106,12 +135,13 @@ fi
 
 if [[ "$(git branch | grep '\*')" =~ $REVIEW_BASE ]]; then
   # If on master, show heatmap for whole repo
-  files | filter | histogram | color_name
+  files | expand | filter | histogram | color_name
 else
   MERGE_BASE="$(git merge-base HEAD "$REVIEW_BASE")"
   files | \
     # If on separate branch, show heatmap for files changed since master
     grep -xF -f <(git diff --name-only "$MERGE_BASE") | \
+    expand | \
     filter | \
     histogram | \
     color_name

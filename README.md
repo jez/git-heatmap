@@ -44,6 +44,8 @@ Options:
   -c <char>, --char <char>      Use <char> to draw the bars. [default: █]
   -f <cmd>, --filter <cmd>      Filter output through <cmd> before creating the
                                 the histogram.
+  -a, --all                     Include directories and parent directories of
+                                files in the histogram. [default: false]
   -h                            Show this message.
 ```
 
@@ -58,6 +60,9 @@ Options:
 - **How do I heatmap directories instead of files?**
 
   Use `--filter 'xargs dirname'`.
+  
+  If you want to heatmap files, directories and their parent directories, use
+  `--all` instead.
   
 ## License
 
